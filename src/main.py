@@ -5,9 +5,9 @@ import torch
 from tqdm.contrib.logging import logging_redirect_tqdm
 
 import utils
-from data import Preprocessor, create_dataloader
+from dataV2 import Preprocessor, create_dataloader
 from models import build_model
-from training import EvaluateCallback, create_trainer
+from trainingV2 import EvaluateCallback, create_trainer
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
