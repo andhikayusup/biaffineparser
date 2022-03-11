@@ -48,7 +48,7 @@ def dump_conll(docs, writer=sys.stdout):
         writer.write("\n")
     writer.flush()
 
-def evaluate(gold_file, system_file):
+def evaluate(gold_file, system_file, verbose=False):
     with open(gold_file) as gf, open(system_file) as sf:
         scores = eval.evaluate(eval.load_conllu(gf), eval.load_conllu(sf))
         return dict(LAS=scores['LAS'].f1, UAS=scores['UAS'].f1, raw="")
