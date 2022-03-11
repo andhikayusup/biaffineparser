@@ -1,8 +1,7 @@
 from collections import OrderedDict, UserDict
 from os import PathLike
 
-from torch import embedding
-import fasttext
+from gensim.models import KeyedVectors
 from typing import (
     Callable,
     Collection,
@@ -210,9 +209,8 @@ def load_embeddings(
     return embeddings
 
 def load_fasttext(fname):
-    ft = fasttext.load_model(fname)
+    fasttext = KeyedVectors.load_word2vec_format(fname)
     embeddings = OrderedDict()
-    for word in ft.words:
-        embeddings[word] = ft[word]
-    ft = None
+    for _, key in enumerate(fasttext.wv.vocab):
+        embeddings[key] = fasttext.get_vector(key)
     return embeddings
