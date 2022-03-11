@@ -51,8 +51,10 @@ class Preprocessor:
             for tokens in utils.conllu.read_conll(file):
                 for token in tokens:
                     word_counter[_apply(token["form"], preprocess)] += 1
-                    postag_vocab(token["upos"])
-                    deprel_vocab(token["deprel"].split(":")[0])
+            for postag in utils.conllu.get_postag():
+                postag_vocab(postag)
+            for deprel in utils.conllu.get_deprel():
+                deprel_vocab(deprel)
             word_iter = (k for k, v in word_counter.items() if v >= min_frequency)
             word_vocab = utils.data.Vocab.fromkeys(word_iter, unknown)
             word_vocab.preprocess = preprocess
