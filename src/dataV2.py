@@ -87,7 +87,7 @@ class Preprocessor:
 
     @staticmethod
     def _load_embeddings(file) -> Tuple[List[str], torch.Tensor]:
-        embeddings = utils.data.load_embeddings(file)
+        embeddings = utils.data.load_fasttext(file)
         return (list(embeddings.keys()), torch.tensor(list(embeddings.values())))
 
     def transform(
