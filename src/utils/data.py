@@ -1,6 +1,8 @@
 from collections import OrderedDict, UserDict
 from os import PathLike
-import io
+
+from torch import embedding
+import fasttext
 from typing import (
     Callable,
     Collection,
@@ -208,10 +210,9 @@ def load_embeddings(
     return embeddings
 
 def load_fasttext(fname):
-    fin = io.open(fname, 'r', encoding='utf-8', newline='\n', errors='ignore')
-    n, d = map(int, fin.readline().split())
-    data = {}
-    for line in fin:
-        tokens = line.rstrip().split(' ')
-        data[tokens[0]] = map(float, tokens[1:])
-    return data
+    ft = fasttext.load_model(fname)
+    embeddings = OrderedDict()
+    for word in ft.words:
+        embeddings[word] = ft[word]
+    ft = None
+    return embeddings
