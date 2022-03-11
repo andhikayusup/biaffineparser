@@ -11,7 +11,7 @@ from utils.chuliu_edmonds import chuliu_edmonds_one_root
 
 def build_model(**kwargs) -> "BiaffineParser":
     embeddings = [
-        (kwargs.get(f"{name}_vocab_size", 1), kwargs.get(f"{name}_embed_size", 100))
+        (kwargs.get(f"{name}_vocab_size", 1), kwargs.get(f"{name}_embed_size", 300))
         for name in ["word", "pretrained_word", "postag"]
     ]
     if kwargs.get("pretrained_word_embeddings") is not None:
