@@ -47,14 +47,12 @@ class Preprocessor:
         def _build_vocabs(file):
             word_counter: Dict[str, int] = defaultdict(int)
             postag_vocab = utils.data.Vocab(unknown)
-            deprel_vocab = utils.data.Vocab()
+            deprel_vocab = utils.data.Vocab(unknown)
             for tokens in utils.conllu.read_conll(file):
                 for token in tokens:
                     word_counter[_apply(token["form"], preprocess)] += 1
-            for postag in utils.conllu.get_postag():
-                postag_vocab(postag)
-            for deprel in utils.conllu.get_deprel():
-                deprel_vocab(deprel)
+                    postag_vocab(token["upos"])
+                    deprel_vocab(token["deprel"].split(":")[0])
             word_iter = (k for k, v in word_counter.items() if v >= min_frequency)
             word_vocab = utils.data.Vocab.fromkeys(word_iter, unknown)
             word_vocab.preprocess = preprocess
