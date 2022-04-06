@@ -49,11 +49,11 @@ def main():
     subparser.set_defaults(command=train)
     subparser.add_argument("--train_file", type=str, required=True, metavar="FILE")
     subparser.add_argument("--eval_file", type=str, default=None, metavar="FILE")
-    subparser.add_argument("--embed_file", type=str, default=None, metavar="FILE")
     subparser.add_argument("--max_steps", type=int, default=50000, metavar="NUM")
     subparser.add_argument("--eval_interval", type=int, default=100, metavar="NUM")
     subparser.add_argument("--batch_size", type=int, default=5000, metavar="NUM")
     subparser.add_argument("--learning_rate", "--lr", type=float, default=2e-3, metavar="VALUE")
+    subparser.add_argument("--preprocessor_file", "--proc", type=str, required=True, metavar="FILE")
     subparser.add_argument("--cuda", action="store_true")
     subparser.add_argument("--save_dir", type=str, default=None, metavar="DIR")
     subparser.add_argument("--cache_dir", type=str, default=None, metavar="DIR")
@@ -143,15 +143,11 @@ def finetune(args):
         utils.random.seed_everything(args.seed)
     device = torch.device("cuda" if args.cuda else "cpu")
 
-    preprocessor = Preprocessor()
-    preprocessor.build_vocab(args.train_file, cache_dir=args.cache_dir)
-    if args.embed_file:
-        preprocessor.load_embeddings(args.embed_file, cache_dir=args.cache_dir)
+    preprocessor = torch.load(args.preprocessor_file)
     loader_config = dict(
         preprocessor=preprocessor,
         batch_size=args.batch_size,
         device=device,
-        cache_dir=args.cache_dir,
     )
     train_dataloader = create_dataloader(args.train_file, **loader_config, shuffle=True)
     eval_dataloader = None
@@ -163,7 +159,6 @@ def finetune(args):
         word_vocab_size=len(preprocessor.vocabs["word"]),
         pretrained_word_vocab_size=len(preprocessor.vocabs["pretrained_word"]),
         postag_vocab_size=len(preprocessor.vocabs["postag"]),
-        pretrained_word_embeddings=preprocessor.pretrained_word_embeddings,
         n_deprels=len(preprocessor.vocabs["deprel"]),
     )
     model.load_state_dict(source_model["model"])
